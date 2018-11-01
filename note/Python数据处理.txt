@@ -1,0 +1,88 @@
+df.pop('class')
+
+#查看缺失值个数
+
+all_dummy_df.isnull().sum().sort_values(ascending=False).head(10)
+
+# 将缺失值用该列的均值填充
+all_data = all_data.fillna(all_data.mean())
+
+# 缺失值删除
+df = mydf.dropna()
+
+array to list:
+train_x_list=train_data.tolist()
+
+dataFrame to array 
+np.array(data_x)
+y_train.values
+
+
+定性变量的encode
+all_dummy_df = pd.get_dummies(all_df)
+
+
+数值变量进行标准化
+all_dummy_df.isnull().sum().sum()
+
+
+mean_cols = all_dummy_df.mean()
+all_dummy_df = all_dummy_df.fillna(mean_cols)
+
+# 删除不必要的变量(字符串变量和各哑变量中的一个变量)
+mydf = mydf.drop([ 'League', 'Division', 'NewLeague', 'League_N', 'Division_W', 'NewLeague_N'], axis = 1)
+
+
+# 将数据集拆分成训练集和测试集
+predictors = list(mydf.columns)
+predictors.remove( 'Salary')
+
+
+X_train, X_test, y_train, y_test = train_test_split(mydf[predictors],mydf[ 'Salary'], train_size = 0.8, random_state = 1234)
+
+
+# 2. 删除缺失值过半的特征
+
+drop_columns = missing_df.ix[missing_df['missing_count']>0.5, 'column_name'].values
+data_train.drop(drop_columns, axis=1, inplace=True)
+data_test.drop(drop_columns, axis=1, inplace=True)
+
+# 3. 删除不正常的行数据
+data_all.drop(data_train[data_train["life_sq"] > 7000].index, inplace=True)
+
+
+删除行，使用参数axis = 0，删除列的参数axis = 1
+0, or ‘index’ : Drop rows which contain missing values.
+1, or ‘columns’ : Drop columns which contain missing value.
+df.dropna(axis = 0)
+
+# 最终结果采用两种模型预测的加权平均值,提交结果
+preds = 0.7*lasso_preds + 0.3*xgb_preds
+result = pd.DataFrame({"id":test.Id, "SalePrice":preds})
+result.to_csv('result.csv', index = False)
+
+#丢弃重复行
+df.drop_duplicates() 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

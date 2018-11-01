@@ -1,0 +1,39 @@
+user_hwda_dbread
+
+dbo.hw_da_sal_prediction_base_v2   数据基本信息表  dbo.
+
+
+select  the_attrib_nm2    from 
+dbo.hw_da_sal_prediction_base_v2 
+where the_date is not null 
+and SUBSTRING (the_date, 0, 6) = '201803'
+
+
+
+
+select  * from 
+dbo.hw_da_sal_prediction_base_v2 
+where the_date is not null 
+and left(the_date, 6) = '201803'
+
+
+
+
+select the_attrib_nm2, the_attrib_nm5, the_attrib_nm23,
+ sum(the_sal_qty) as sum_sal_qty, sum(the_sal_amt)  as sum_sal_amt  from 
+dbo.hw_da_sal_prediction_base_v2 
+where the_date is not null 
+and left(the_date, 6) = '201803'
+group by the_attrib_nm2, the_attrib_nm5, the_attrib_nm23
+
+
+
+
+
+
+
+hw_da_model_solor_data_20180510_only_input_TEMP_v2_0000
+
+
+
+SELECT the_attrib_nm2, the_attrib_nm5, the_attrib_nm6, the_attrib_nm23, the_date, org_id, the_pro_id, the_pro_color_id, the_sal_qty, the_sal_amt, the_sal_prm_amt, the_sal_fixcost_amt, the_week_date, the_last_week_date, SABCrank, recv_qty, salStartDate, p_weeks, lsg_weeks, percentum, b_percentum, a_percentum, qtyrate, amtrate, avg_qty, qty, org_num, last_inv_qty, last_use_inv_qty, inv_qty, use_inv_qty FROM hw_models.dbo.[hw_da_sal_prediction_base_v2]  WHERE the_date is not null AND left(the_date, 6) = '201803'

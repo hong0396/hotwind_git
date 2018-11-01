@@ -1,0 +1,41 @@
+*********************************************************
+#取较小值
+select decode(sign(变量1-变量2),-1,变量1,变量2) from dual; --
+
+注意： 只有等于，不能比较大小
+
+DECODE(value,if1,then1,if2,then2,if3,then3,...,else)
+
+
+SIGN(n)
+当 n < 0 返回 -1
+   n = 0 返回  0
+   n > 0 返回  1
+
+decode(条件,值1,翻译值1,值2,翻译值2,…值n,翻译值n,缺省值)的理解如下：
+
+if （条件==值1）
+
+then　　　　
+
+return(翻译值1)
+
+elsif （条件==值2）
+
+then　　　　
+
+return(翻译值2)　　　　
+
+……
+
+elsif （条件==值n）
+
+then　　　　
+
+return(翻译值n)
+
+else　　　　
+
+return(缺省值)
+
+end if

@@ -1,0 +1,29 @@
+首先调整max_depth ,通常max_depth 这个参数与其他参数关系不大，初始值设置为10，找到一个最好的误差值，然后就可以调整参数与这个误差值进行对比。比如调整到8，如果此时最好的误差变高了，那么下次就调整到12；如果调整到12,误差值比10 的低，那么下次可以尝试调整到15.
+
+在找到了最优的max_depth之后，可以开始调整subsample,初始值设置为1，然后调整到0.8 如果误差值变高，下次就调整到0.9，如果还是变高，就保持为1.0
+
+接着开始调整min_child_weight , 方法与上面同理
+
+再接着调整colsample_bytree
+
+经过上面的调整，已经得到了一组参数，这时调整eta 到0.05，然后让程序运行来得到一个最佳的num_round,(在 误差值开始上升趋势的时候为最佳 )
+
+
+
+
+
+
+
+这里面主要是说的一般调booster参数的思路
+
+step1：设置一些初始值。
+
+step2：保持learning rate和其他booster相关的参数不变，调节和estimators的参数。、
+
+step3：保证estimator和其他的booster参数不变，调节learning rate
+
+step4：保持estimator和learning rate不变，调节booste相关的参数。可以从影响最大的max_depth 和min_child_weight开始。逐步调节所有可能有影响的booster参数
+
+step5: 缩小learning rate，得到最佳的learning rate值
+
+step6：得到一组效果还不错的参数组合

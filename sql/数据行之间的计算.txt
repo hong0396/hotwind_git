@@ -1,0 +1,87 @@
+﻿
+***********************************************************************************************************************
+#LAG(col,n,DEFAULT) 用于统计窗口内往上第n行值
+第一个参数为列名，第二个参数为往上第n行（可选，默认为1），第三个参数为默认值（当往上第n行为NULL时候，取默认值，如不指定，则为NULL）
+
+lag(sal) over (partition by dept_no order by sal) as lag_end
+
+CASE when lag(sal)over(partition by dept_no order by sal) is null then max(sal)OVER(partition by dept_no order by sal desc)
+ else lag(sal)over(partition by dept_no order by sal)
+ end lag_end
+
+LAG(createtime,1,'1970-01-01 00:00:00') OVER(PARTITION BY cookieid ORDER BY createtime) AS last_1_time,
+LAG(createtime,2) OVER(PARTITION BY cookieid ORDER BY createtime) AS last_2_time 
+
+
+SELECT cookieid,
+createtime,
+url,
+ROW_NUMBER() OVER(PARTITION BY cookieid ORDER BY createtime) AS rn,
+LAG(createtime,1,'1970-01-01 00:00:00') OVER(PARTITION BY cookieid ORDER BY createtime) AS last_1_time,
+LAG(createtime,2) OVER(PARTITION BY cookieid ORDER BY createtime) AS last_2_time 
+FROM lxw1234;
+
+
+cookieid createtime             url    rn       last_1_time             last_2_time
+-------------------------------------------------------------------------------------------
+cookie1 2015-04-10 10:00:00     url1    1       1970-01-01 00:00:00     NULL
+cookie1 2015-04-10 10:00:02     url2    2       2015-04-10 10:00:00     NULL
+cookie1 2015-04-10 10:03:04     1url3   3       2015-04-10 10:00:02     2015-04-10 10:00:00
+cookie1 2015-04-10 10:10:00     url4    4       2015-04-10 10:03:04     2015-04-10 10:00:02
+cookie1 2015-04-10 10:50:01     url5    5       2015-04-10 10:10:00     2015-04-10 10:03:04
+cookie1 2015-04-10 10:50:05     url6    6       2015-04-10 10:50:01     2015-04-10 10:10:00
+cookie1 2015-04-10 11:00:00     url7    7       2015-04-10 10:50:05     2015-04-10 10:50:01
+cookie2 2015-04-10 10:00:00     url11   1       1970-01-01 00:00:00     NULL
+cookie2 2015-04-10 10:00:02     url22   2       2015-04-10 10:00:00     NULL
+cookie2 2015-04-10 10:03:04     1url33  3       2015-04-10 10:00:02     2015-04-10 10:00:00
+cookie2 2015-04-10 10:10:00     url44   4       2015-04-10 10:03:04     2015-04-10 10:00:02
+cookie2 2015-04-10 10:50:01     url55   5       2015-04-10 10:10:00     2015-04-10 10:03:04
+cookie2 2015-04-10 10:50:05     url66   6       2015-04-10 10:50:01     2015-04-10 10:10:00
+cookie2 2015-04-10 11:00:00     url77   7       2015-04-10 10:50:05     2015-04-10 10:50:01
+ 
+ 
+last_1_time: 指定了往上第1行的值，default为'1970-01-01 00:00:00'  
+             cookie1第一行，往上1行为NULL,因此取默认值 1970-01-01 00:00:00
+             cookie1第三行，往上1行值为第二行值，2015-04-10 10:00:02
+             cookie1第六行，往上1行值为第五行值，2015-04-10 10:50:01
+last_2_time: 指定了往上第2行的值，为指定默认值
+						 cookie1第一行，往上2行为NULL
+						 cookie1第二行，往上2行为NULL
+						 cookie1第四行，往上2行为第二行值，2015-04-10 10:00:02
+						 cookie1第七行，往上2行为第五行值，2015-04-10 10:50:01
+
+
+************************************************************************************************************************
+
+#LEAD(col,n,DEFAULT) 用于统计窗口内往下第n行值
+第一个参数为列名，第二个参数为往下第n行（可选，默认为1），第三个参数为默认值（当往下第n行为NULL时候，取默认值，如不指定，则为NULL）
+
+与LAG相反
+
+SELECT cookieid,
+createtime,
+url,
+ROW_NUMBER() OVER(PARTITION BY cookieid ORDER BY createtime) AS rn,
+LEAD(createtime,1,'1970-01-01 00:00:00') OVER(PARTITION BY cookieid ORDER BY createtime) AS next_1_time,
+LEAD(createtime,2) OVER(PARTITION BY cookieid ORDER BY createtime) AS next_2_time 
+FROM lxw1234;
+ 
+
+cookieid createtime             url    rn       next_1_time             next_2_time 
+-------------------------------------------------------------------------------------------
+cookie1 2015-04-10 10:00:00     url1    1       2015-04-10 10:00:02     2015-04-10 10:03:04
+cookie1 2015-04-10 10:00:02     url2    2       2015-04-10 10:03:04     2015-04-10 10:10:00
+cookie1 2015-04-10 10:03:04     1url3   3       2015-04-10 10:10:00     2015-04-10 10:50:01
+cookie1 2015-04-10 10:10:00     url4    4       2015-04-10 10:50:01     2015-04-10 10:50:05
+cookie1 2015-04-10 10:50:01     url5    5       2015-04-10 10:50:05     2015-04-10 11:00:00
+cookie1 2015-04-10 10:50:05     url6    6       2015-04-10 11:00:00     NULL
+cookie1 2015-04-10 11:00:00     url7    7       1970-01-01 00:00:00     NULL
+cookie2 2015-04-10 10:00:00     url11   1       2015-04-10 10:00:02     2015-04-10 10:03:04
+cookie2 2015-04-10 10:00:02     url22   2       2015-04-10 10:03:04     2015-04-10 10:10:00
+cookie2 2015-04-10 10:03:04     1url33  3       2015-04-10 10:10:00     2015-04-10 10:50:01
+cookie2 2015-04-10 10:10:00     url44   4       2015-04-10 10:50:01     2015-04-10 10:50:05
+cookie2 2015-04-10 10:50:01     url55   5       2015-04-10 10:50:05     2015-04-10 11:00:00
+cookie2 2015-04-10 10:50:05     url66   6       2015-04-10 11:00:00     NULL
+cookie2 2015-04-10 11:00:00     url77   7       1970-01-01 00:00:00     NULL
+
+--逻辑与LAG一样，只不过LAG是往上，LEAD是往下。

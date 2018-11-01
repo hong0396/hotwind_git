@@ -1,0 +1,34 @@
+
+
+#所在组排名序号除以该组所有的行数，但是如果存在并列情况，则需加上并列的个数-1
+cume_dist()  OVER (PARTITION BY t.barea_nm ORDER BY t.sal_amt desc)
+ 
+cume_dist的计算方法：小于等于当前行值的行数/总行数。
+
+比如，第3行值为10，有3行的值小于等于10,总行数10行，因此CUME_DIST为3/10=0.3 。
+
+再比如，第4行值为40，行值小于等于40的共5行，总行数10行，因此CUME_DIST为5/10=0.5 。
+
+
+
+
+#所在组排名序号-1除以该组所有的行数-1，
+percent_rank()  OVER (PARTITION BY t.barea_nm ORDER BY t.sal_amt desc) 
+
+PERCENT_RANK的计算方法：当前RANK值-1/总行数-1 。
+
+比如，第4行的RANK值为4，总行数10行，因此PERCENT_RANK为4-1/10-1= 0.333333333333333。
+
+再比如，第7行的RANK值为6，总行数10行，因此PERCENT_RANK为6-1/10-1=0.555555555555556。
+
+
+
+
+
+#值占组内的占比   当前行值除以分组的总和sum，比例
+ratio_to_report是不支持order by的。
+ratio_to_report(sal) over ()  没有分组，是该列全数据的比例
+ratio_to_report(sal) over (partition by deptno) as pct2   根据depton列，计算组内的比例
+
+
+

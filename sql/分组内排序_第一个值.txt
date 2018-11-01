@@ -1,0 +1,135 @@
+
+********************************************************************************
+
+#FIRST_VALUE
+取分组内排序后，截止到当前行，第一个值
+
+SELECT cookieid,
+createtime,
+url,
+ROW_NUMBER() OVER(PARTITION BY cookieid ORDER BY createtime) AS rn,
+FIRST_VALUE(url) OVER(PARTITION BY cookieid ORDER BY createtime) AS first1 
+FROM lxw1234;
+ 
+cookieid  createtime            url     rn      first1
+---------------------------------------------------------
+cookie1 2015-04-10 10:00:00     url1    1       url1
+cookie1 2015-04-10 10:00:02     url2    2       url1
+cookie1 2015-04-10 10:03:04     1url3   3       url1
+cookie1 2015-04-10 10:10:00     url4    4       url1
+cookie1 2015-04-10 10:50:01     url5    5       url1
+cookie1 2015-04-10 10:50:05     url6    6       url1
+cookie1 2015-04-10 11:00:00     url7    7       url1
+cookie2 2015-04-10 10:00:00     url11   1       url11
+cookie2 2015-04-10 10:00:02     url22   2       url11
+cookie2 2015-04-10 10:03:04     1url33  3       url11
+cookie2 2015-04-10 10:10:00     url44   4       url11
+cookie2 2015-04-10 10:50:01     url55   5       url11
+cookie2 2015-04-10 10:50:05     url66   6       url11
+cookie2 2015-04-10 11:00:00     url77   7       url11
+
+**************************************************************************************8
+#LAST_VALUE
+取分组内排序后，截止到当前行，最后一个值
+
+SELECT cookieid,
+createtime,
+url,
+ROW_NUMBER() OVER(PARTITION BY cookieid ORDER BY createtime) AS rn,
+LAST_VALUE(url) OVER(PARTITION BY cookieid ORDER BY createtime) AS last1 
+FROM lxw1234;
+ 
+ 
+cookieid  createtime            url    rn       last1  
+-----------------------------------------------------------------
+cookie1 2015-04-10 10:00:00     url1    1       url1
+cookie1 2015-04-10 10:00:02     url2    2       url2
+cookie1 2015-04-10 10:03:04     1url3   3       1url3
+cookie1 2015-04-10 10:10:00     url4    4       url4
+cookie1 2015-04-10 10:50:01     url5    5       url5
+cookie1 2015-04-10 10:50:05     url6    6       url6
+cookie1 2015-04-10 11:00:00     url7    7       url7
+cookie2 2015-04-10 10:00:00     url11   1       url11
+cookie2 2015-04-10 10:00:02     url22   2       url22
+cookie2 2015-04-10 10:03:04     1url33  3       1url33
+cookie2 2015-04-10 10:10:00     url44   4       url44
+cookie2 2015-04-10 10:50:01     url55   5       url55
+cookie2 2015-04-10 10:50:05     url66   6       url66
+cookie2 2015-04-10 11:00:00     url77   7       url77
+
+***********************************************************************************************
+如果不指定ORDER BY，则默认按照记录在文件中的偏移量进行排序，会出现错误的结果
+
+SELECT cookieid,
+createtime,
+url,
+FIRST_VALUE(url) OVER(PARTITION BY cookieid) AS first2  
+FROM lxw1234;
+ 
+cookieid  createtime            url     first2
+----------------------------------------------
+cookie1 2015-04-10 10:00:02     url2    url2
+cookie1 2015-04-10 10:00:00     url1    url2
+cookie1 2015-04-10 10:03:04     1url3   url2
+cookie1 2015-04-10 10:50:05     url6    url2
+cookie1 2015-04-10 11:00:00     url7    url2
+cookie1 2015-04-10 10:10:00     url4    url2
+cookie1 2015-04-10 10:50:01     url5    url2
+cookie2 2015-04-10 10:00:02     url22   url22
+cookie2 2015-04-10 10:00:00     url11   url22
+cookie2 2015-04-10 10:03:04     1url33  url22
+cookie2 2015-04-10 10:50:05     url66   url22
+cookie2 2015-04-10 11:00:00     url77   url22
+cookie2 2015-04-10 10:10:00     url44   url22
+cookie2 2015-04-10 10:50:01     url55   url22
+ 
+SELECT cookieid,
+createtime,
+url,
+LAST_VALUE(url) OVER(PARTITION BY cookieid) AS last2  
+FROM lxw1234;
+ 
+cookieid  createtime            url     last2
+----------------------------------------------
+cookie1 2015-04-10 10:00:02     url2    url5
+cookie1 2015-04-10 10:00:00     url1    url5
+cookie1 2015-04-10 10:03:04     1url3   url5
+cookie1 2015-04-10 10:50:05     url6    url5
+cookie1 2015-04-10 11:00:00     url7    url5
+cookie1 2015-04-10 10:10:00     url4    url5
+cookie1 2015-04-10 10:50:01     url5    url5
+cookie2 2015-04-10 10:00:02     url22   url55
+cookie2 2015-04-10 10:00:00     url11   url55
+cookie2 2015-04-10 10:03:04     1url33  url55
+cookie2 2015-04-10 10:50:05     url66   url55
+cookie2 2015-04-10 11:00:00     url77   url55
+cookie2 2015-04-10 10:10:00     url44   url55
+cookie2 2015-04-10 10:50:01     url55   url55
+
+如果想要取分组内排序后最后一个值，则需要变通一下：
+SELECT cookieid,
+createtime,
+url,
+ROW_NUMBER() OVER(PARTITION BY cookieid ORDER BY createtime) AS rn,
+LAST_VALUE(url) OVER(PARTITION BY cookieid ORDER BY createtime) AS last1,
+FIRST_VALUE(url) OVER(PARTITION BY cookieid ORDER BY createtime DESC) AS last2 
+FROM lxw1234 
+ORDER BY cookieid,createtime;
+ 
+cookieid  createtime            url     rn     last1    last2
+-------------------------------------------------------------
+cookie1 2015-04-10 10:00:00     url1    1       url1    url7
+cookie1 2015-04-10 10:00:02     url2    2       url2    url7
+cookie1 2015-04-10 10:03:04     1url3   3       1url3   url7
+cookie1 2015-04-10 10:10:00     url4    4       url4    url7
+cookie1 2015-04-10 10:50:01     url5    5       url5    url7
+cookie1 2015-04-10 10:50:05     url6    6       url6    url7
+cookie1 2015-04-10 11:00:00     url7    7       url7    url7
+cookie2 2015-04-10 10:00:00     url11   1       url11   url77
+cookie2 2015-04-10 10:00:02     url22   2       url22   url77
+cookie2 2015-04-10 10:03:04     1url33  3       1url33  url77
+cookie2 2015-04-10 10:10:00     url44   4       url44   url77
+cookie2 2015-04-10 10:50:01     url55   5       url55   url77
+cookie2 2015-04-10 10:50:05     url66   6       url66   url77
+cookie2 2015-04-10 11:00:00     url77   7       url77   url77
+提示：在使用分析函数的过程中，要特别注意ORDER BY子句，用的不恰当，统计出的结果就不是你所期望的。

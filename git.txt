@@ -1,0 +1,18 @@
+git add -A
+
+git add .
+
+git commit -m  "one-night"
+
+git remote rm origin
+
+git remote add origin https://github.com/hong0396/hotwind_git.git
+
+git push -u origin master
+
+
+可以通过如下命令进行代码合并【注：pull=fetch+merge]
+
+git pull --rebase origin master
+
+
