@@ -68,7 +68,7 @@ def nptopd(x, y):
 
 
 
-all=pd.read_csv('E:/test1_analysis_3.csv')
+all=pd.read_csv('E:/test1_analysis_all2.csv')
 
 all=all.drop(['code'], axis = 1)
 print(all.columns.values.tolist())
@@ -104,10 +104,18 @@ def get_01(n):
 print('##########################分类#################################')
 # all['li_123_tmp_fenlei']=all['li_123_tmp'].apply(get_01)
 # y=(all['li_123_tmp'].apply(np.log1p))
-y=all['li_01_tmp'].values
-# y=(all['li_123_tmp'].apply(np.log1p))
-X=all.drop(['li_123_tmp','li_01_tmp','li_time_tmp'], axis = 1)
 
+# y=(all['li_123_tmp'].apply(np.log1p))
+
+
+
+
+# pd.qcut(all['li_123_tmp'], 3, labels=["good","medium","bad"])
+all['li_qcut_tmp']=pd.qcut(all['li_123_tmp'], 3,labels=False)
+# print(pp)
+
+y=all['li_qcut_tmp'].values
+X=all.drop(['li_123_tmp','li_01_tmp','li_time_tmp','li_qcut_tmp'], axis = 1)
 # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2)
 
 # X_trainval,X_test,y_trainval,y_test = train_test_split(X,y,random_state=0)
@@ -140,7 +148,7 @@ model.add(Dense(20, input_dim=X_trainval.shape[1], activation='relu'))
 
 model.add(Dense(10, activation='relu'))
 
-model.add(Dense(2, activation='sigmoid'))
+model.add(Dense(3, activation='sigmoid'))
 # rmsprop = RMSprop(lr=0.001, rho=0.9, epsilon=1e-08, decay=0.0)
 # model.compile(loss='binary_crossentropy', optimizer='adam')
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
@@ -154,7 +162,7 @@ print('Training -----------')
 model.fit(X_trainval, y_binary,  batch_size=100)
 
 
-print('\nTesting ------------')
+print('Testing ------------')
 # Evaluate the model with the metrics we defined earlier
 loss, accuracy = model.evaluate(X_test, y_test_binary)
 
@@ -281,7 +289,7 @@ for clf, label in zip([clf1, clf2, clf3, eclf], ['Logistic Regression', 'Random 
 ##################################
 
 
-xgbc = XGBClassifier(scale_pos_weight=6,learning_rate=0.1)
+xgbc = XGBClassifier(learning_rate=0.1)
 xgbc.fit(X_trainval, y_trainval)
 
 print("XGBoost预测准确率:", xgbc.score(X_test, y_test))  # 0.7872340425531915

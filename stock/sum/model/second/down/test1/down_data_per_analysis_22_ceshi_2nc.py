@@ -125,7 +125,7 @@ def  get_data(zong,li):
     li_large_range_tmp=[]
     li_large_2345_range_tmp=[]
     
-    li_012_tmp=[]
+    li_01_tmp=[]
     li_time_tmp=[]
     li_123_tmp=[]
     time=li.index('time')
@@ -330,10 +330,10 @@ def  get_data(zong,li):
 
                                                                 else:
                                                                     tmp_123=0 
-                                                                li_012_tmp.append(tmp_123) 
+                                                                li_01_tmp.append(tmp_123) 
 
                                                                 li_123_avg=min(zong[i-1][close],zong[i-2][close])
-                                                                li_123_tmp.append((li_123_avg - zong[i][close])/zong[i][close])
+                                                                li_123_tmp.append((zong[i-1][close] - zong[i][close])/zong[i][close])
                                                                 
 
 
@@ -403,7 +403,7 @@ def  get_data(zong,li):
         #  'li_1vol_tmp': li_1vol_tmp,
         # 'li_2vol_tmp': li_2vol_tmp, 'li_3vol_tmp': li_3vol_tmp,
         # 'li_4vol_tmp': li_4vol_tmp, 'li_5vol_tmp': li_5vol_tmp,
-         'li_time_tmp':li_time_tmp,'li_012_tmp':li_012_tmp,
+         'li_time_tmp':li_time_tmp,'li_01_tmp':li_01_tmp,
         'li_grow_std':li_grow_std,'li_grow_mean':li_grow_mean,
         'li_123_tmp': li_123_tmp}
     else:
