@@ -1,5 +1,5 @@
-# import pandas as pd
-import dask.dataframe as pd
+import pandas as pd
+# import dask.dataframe as pd
 import numpy as np 
 import pandas_datareader.data as web
 import datetime
@@ -124,7 +124,7 @@ def  get_data(zong,li):
     high=li.index('high')
     low=li.index('low')
     if len(zong) > 100:
-                for i in range(len(zong)-5):
+                for i in range(3,len(zong)-5):
                     if min(zong[i][open], zong[i+1][open],zong[i][close], zong[i+1][close]) >= max(zong[i+2][open], zong[i+3][open],zong[i+4][open],zong[i+2][close], zong[i+3][close],zong[i+4][close]):
                         if zong[i+2][close] == max(zong[i+2][open], zong[i+3][open],zong[i+4][open],zong[i+2][close], zong[i+3][close],zong[i+4][close]) : 
                                     if abs((zong[i][close] - zong[i][open])/zong[i][open]) < 0.03:
@@ -379,17 +379,25 @@ for code_nm in code:
     zong = zong.dropna(axis = 0)  #删除行
     zong = zong.fillna(0)
     zong = zong.round(6)   
-    zong = zong.sort_values("time",ascending=False)
-
-    li=zong.columns.values.tolist()
-    # print(li.index('attrib_nm2'))
-    tmp_dic, ttmp=get_data(zong.values,li)
-    if ttmp and tmp_dic:
-        for key in tmp_dic:
-            if sum_dic.get(key):
-                sum_dic[key].extend(tmp_dic[key])
-            else:     
-                sum_dic[key]=tmp_dic[key]
+    if zong[zong['volume']>100000].size >0:
+        lii=zong[zong['volume']>100000].index.tolist()
+        if lii:
+            vv=min(lii)
+            if len(zong) > vv:
+                zong=zong[vv:]
+                zong = zong.sort_values("time",ascending=False)
+                # zong = zong.sort_index(ascending=False)
+                li=zong.columns.values.tolist()
+                # print(li)
+                # print(li.index('attrib_nm2'))
+                 
+                tmp_dic, ttmp=get_data(zong.values,li)
+                if ttmp and tmp_dic:
+                    for key in tmp_dic:
+                        if sum_dic.get(key):
+                            sum_dic[key].extend(tmp_dic[key])
+                        else:     
+                            sum_dic[key]=tmp_dic[key]
 
 #检验数据            
 # for key in sum_dic:

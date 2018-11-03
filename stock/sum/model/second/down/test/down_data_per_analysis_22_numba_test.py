@@ -124,26 +124,26 @@ def  get_data(zong,li):
 
 
     li_123_tmp=[]
-    li_01_tmp=[]
     open=li.index('open')
     close=li.index('close')
     high=li.index('high')
     low=li.index('low') 
     if len(zong) > 100:
         for i in range(3,len(zong)-5):
-            if round(zong[i][open],2) > round(zong[i+1][close],2) and round(zong[i+1][open],2) > round(zong[i+2][open],2):
-                if round(zong[i][open],2) > round(zong[i+2][open],2):
-                    if round(zong[i+2][open],2) > round(zong[i+3][open],2):
-                        if round(zong[i+3][open],2) > round(zong[i+4][open],2):
-                            if round(zong[i+4][open],2) > round(zong[i+5][open],2):
+            # if round(zong[i][open],2) < round(zong[i+1][close],2) and round(zong[i+1][open],2) < round(zong[i+2][open],2):
+                if round(zong[i][open],2) < round(zong[i+1][open],2):
+                    if round(zong[i+1][open],2) < round(zong[i+2][open],2):
+                        if round(zong[i+2][open],2) < round(zong[i+3][open],2):
+                        # if round(zong[i+3][open],2) < round(zong[i+4][open],2):
+                            # if round(zong[i+4][open],2) < round(zong[i+5][open],2):
 
 
-                                if (zong[i][close] - zong[i][open])/zong[i][open] > 0:
+                                if (zong[i][close] - zong[i][open])/zong[i][open] < 0:
                                     if (zong[i+1][close] - zong[i+1][open])/zong[i+1][open] < 0:
-                                        if (zong[i+2][close] - zong[i+2][open])/zong[i+2][open] > 0:
-                                            if (zong[i+3][close] - zong[i+3][open])/zong[i+3][open] >0:
+                                        if (zong[i+2][close] - zong[i+2][open])/zong[i+2][open] < 0:
+                                            if (zong[i+3][close] - zong[i+3][open])/zong[i+3][open] <0:
                                                 if (zong[i+4][close] - zong[i+4][open])/zong[i+4][open] > 0:
-                                                    if (zong[i+5][close] - zong[i+5][open])/zong[i+5][open] > 0:
+                                                    if (zong[i+5][close] - zong[i+5][open])/zong[i+5][open] < 0:
                                                         if zong[i-5][close]:
                                                                 li_code_tmp.append(str(code_nm))
                                                               
@@ -310,24 +310,7 @@ def  get_data(zong,li):
 
 
                                                                 li_123_avg=(zong[i-1][close]+zong[i-2][close]+zong[i-3][close])/3
-                                                                li_123_tmp.append((li_123_avg - max_value)/max_value)
-
-                                                                if (zong[i-1][close] - zong[i-1][open])/zong[i-1][open] > 0: 
-                                                                    if (zong[i-2][close] - zong[i-2][open])/zong[i-2][open] > 0:
-                                                                        if zong[i-2][open] > zong[i-1][open]:
-                                                                            if zong[i-1][open] > zong[i][open]:
-                                                                                tmp_123=1
-                                                                            else:
-                                                                                tmp_123=0 
-                                                                        else:
-                                                                            tmp_123=0 
-                                                                    else:
-                                                                        tmp_123=0 
-                        
-
-                                                                else:
-                                                                    tmp_123=0 
-                                                                li_01_tmp.append(tmp_123)           
+                                                                li_123_tmp.append((li_123_avg - min_value)/min_value)
 
 
 
@@ -387,7 +370,7 @@ def  get_data(zong,li):
         #  'li_1vol_tmp': li_1vol_tmp,
         # 'li_2vol_tmp': li_2vol_tmp, 'li_3vol_tmp': li_3vol_tmp,
         # 'li_4vol_tmp': li_4vol_tmp, 'li_5vol_tmp': li_5vol_tmp,
-        'li_grow_std':li_grow_std,'li_01_tmp':li_01_tmp,'li_grow_mean':li_grow_mean,
+        'li_grow_std':li_grow_std,'li_grow_mean':li_grow_mean,
         'li_123_tmp': li_123_tmp}
     else:
         tmp_dic=False
@@ -432,7 +415,7 @@ for code_nm in code:
 #     print(len(sum_dic[key]))
 
 tmp_df=pd.DataFrame(sum_dic)
-tmp_df.to_csv('E:/analysis_55.csv', index = False)
+tmp_df.to_csv('E:/down_basic_analysis_2.csv')
 
 
 

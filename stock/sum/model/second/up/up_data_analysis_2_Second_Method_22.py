@@ -122,7 +122,7 @@ for code_nm in code:
         zong = zong.round(6)   
         zong = zong.sort_values("time",ascending=False)
         if len(zong) > 100:
-            for i in range(len(zong)-5):
+            for i in range(3,len(zong)-5):
                 if min(zong.iloc[i]['open'], zong.iloc[i+1]['open'],zong.iloc[i]['close'], zong.iloc[i+1]['close']) >= max(zong.iloc[i+2]['open'], zong.iloc[i+3]['open'],zong.iloc[i+4]['open'],zong.iloc[i+2]['close'], zong.iloc[i+3]['close'],zong.iloc[i+4]['close']):
                     if zong.iloc[i+2]['close'] == max(zong.iloc[i+2]['open'], zong.iloc[i+3]['open'],zong.iloc[i+4]['open'],zong.iloc[i+2]['close'], zong.iloc[i+3]['close'],zong.iloc[i+4]['close']) : 
                                 if abs((zong.iloc[i]['close'] - zong.iloc[i]['open'])/zong.iloc[i]['open']) < 0.03:

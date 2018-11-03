@@ -124,7 +124,6 @@ def  get_data(zong,li):
 
 
     li_123_tmp=[]
-    li_01_tmp=[]
     open=li.index('open')
     close=li.index('close')
     high=li.index('high')
@@ -312,23 +311,6 @@ def  get_data(zong,li):
                                                                 li_123_avg=(zong[i-1][close]+zong[i-2][close]+zong[i-3][close])/3
                                                                 li_123_tmp.append((li_123_avg - max_value)/max_value)
 
-                                                                if (zong[i-1][close] - zong[i-1][open])/zong[i-1][open] > 0: 
-                                                                    if (zong[i-2][close] - zong[i-2][open])/zong[i-2][open] > 0:
-                                                                        if zong[i-2][open] > zong[i-1][open]:
-                                                                            if zong[i-1][open] > zong[i][open]:
-                                                                                tmp_123=1
-                                                                            else:
-                                                                                tmp_123=0 
-                                                                        else:
-                                                                            tmp_123=0 
-                                                                    else:
-                                                                        tmp_123=0 
-                        
-
-                                                                else:
-                                                                    tmp_123=0 
-                                                                li_01_tmp.append(tmp_123)           
-
 
 
         # del jo, zong
@@ -387,7 +369,7 @@ def  get_data(zong,li):
         #  'li_1vol_tmp': li_1vol_tmp,
         # 'li_2vol_tmp': li_2vol_tmp, 'li_3vol_tmp': li_3vol_tmp,
         # 'li_4vol_tmp': li_4vol_tmp, 'li_5vol_tmp': li_5vol_tmp,
-        'li_grow_std':li_grow_std,'li_01_tmp':li_01_tmp,'li_grow_mean':li_grow_mean,
+        'li_grow_std':li_grow_std,'li_grow_mean':li_grow_mean,
         'li_123_tmp': li_123_tmp}
     else:
         tmp_dic=False
@@ -406,6 +388,7 @@ for code_nm in code:
     zong = ds_disk.get(str(code_nm)).to_pandas().sort_index(ascending=False)
     zong = zong.dropna(axis = 0)  #删除行
     zong = zong.fillna(0)
+    zong = zong.round(6)   
     if zong[zong['volume']>100000].size >0:
         lii=zong[zong['volume']>100000].index.tolist()
         if lii:
@@ -425,14 +408,13 @@ for code_nm in code:
                             sum_dic[key].extend(tmp_dic[key])
                         else:     
                             sum_dic[key]=tmp_dic[key]
-
 #检验数据            
 # for key in sum_dic:
 #     print(key)
 #     print(len(sum_dic[key]))
 
 tmp_df=pd.DataFrame(sum_dic)
-tmp_df.to_csv('E:/analysis_55.csv', index = False)
+tmp_df.to_csv('E:/analysis_55.csv')
 
 
 

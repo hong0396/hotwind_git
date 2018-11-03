@@ -60,8 +60,9 @@ def nptopd(x, y):
 
 
 
-all=pd.read_csv('analysis_1.csv')
-all=all[all!=0]
+all=pd.read_csv('E:/analysis_55.csv')
+
+# all=all[all!=0]
 # all=all.dropna(thresh=10)
 all=all.dropna()
 all=all.fillna(0)
@@ -69,7 +70,7 @@ all=all.fillna(0)
 
 
 
-all['li_123_tmp']=all['li_123_tmp']*3
+
 all=all
 
 print(abs(all.corr()).sort_values("li_123_tmp",ascending=False)["li_123_tmp"])
@@ -84,19 +85,20 @@ print(abs(all.corr()).sort_values("li_123_tmp",ascending=False)["li_123_tmp"])
 ######################################################################
 
 def get_01(n):
-    if n>0.01:
+    if n>0.02:
         return 1
     else:
         return 0
 
 
 print('##########################分类#################################')
-all['li_123_tmp_fenlei']=all['li_123_tmp'].apply(get_01)
+all['li_123_tmp_fenlei']=all['li_01_tmp']
 # y=(all['li_123_tmp'].apply(np.log1p))
 y=all['li_123_tmp_fenlei'].values
 # y=(all['li_123_tmp'].apply(np.log1p))
-X=all.drop(['li_123_tmp'], axis = 1)
-
+X=all.drop(['code','li_123_tmp','li_01_tmp','li_123_tmp_fenlei'], axis = 1)
+# X=X.str.strip().split('\t')
+X=np.array(X)
 # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2)
 
 # X_trainval,X_test,y_trainval,y_test = train_test_split(X,y,random_state=0)
@@ -108,14 +110,14 @@ X_train,X_val,y_train,y_val = train_test_split(X_trainval,y_trainval,random_stat
 ######################         SVM         #################
 ######################        START        #################
 best_score = 0.0
-for gamma in [0.001,0.01,0.1,1,10,100]:
-    for C in [0.001,0.01,0.1,1,10,100]:
+for gamma in [0.01,1,100]:
+    for C in [0.01,1,100]:
         svm = SVC(gamma=gamma,C=C)
-        svm.fit(X_train,y_train)
-        score = svm.score(X_val,y_val)
+        scores = cross_val_score(svm,X,y,cv=10) #10折交叉验证
+        score = scores.mean() #取平均数
         if score > best_score:
             best_score = score
-            best_parameters = {'gamma':gamma,'C':C}
+            best_parameters = {"gamma":gamma,"C":C}
 svm = SVC(**best_parameters) #使用最佳参数，构建新的模型
 svm.fit(X_trainval,y_trainval) #使用训练集和验证集进行训练，more data always results in good performance.
 y_predst=svm.predict(X_test)

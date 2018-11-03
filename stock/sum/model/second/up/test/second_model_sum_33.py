@@ -82,8 +82,8 @@ all=all.fillna(0)
 
 
 
-all['li_123_tmp']=all['li_123_tmp']
-all=all
+# all['li_123_tmp']=all['li_123_tmp']
+# all=all
 
 print(abs(all.corr()).sort_values("li_123_tmp",ascending=False)["li_123_tmp"])
 
@@ -97,7 +97,7 @@ print(abs(all.corr()).sort_values("li_123_tmp",ascending=False)["li_123_tmp"])
 ######################################################################
 
 def get_01(n):
-    if n<-0.01:
+    if n>0.01:
         return 1
     else:
         return 0
@@ -127,7 +127,7 @@ X_train,X_val,y_train,y_val = train_test_split(X_trainval,y_trainval,random_stat
 
 
 best_score = 0.0
-for gamma in [80,90,110,100]:
+for gamma in [80,90,100]:
     for C in [2,1,3]:
         svm = SVC(gamma=gamma,C=C)
         scores = cross_val_score(svm,X_trainval,y_trainval,cv=10) #10折交叉验证

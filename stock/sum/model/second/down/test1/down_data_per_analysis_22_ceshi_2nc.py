@@ -22,7 +22,10 @@ from numba import jit
 # print(dir(ds_disk))
 
 # code=ds_disk.to_dataframe().columns.tolist()
-
+def todate(timeStamp):
+    timeArray = time.localtime(timeStamp/1000)
+    otherStyleTime = time.strftime("%Y-%m-%d", timeArray)
+    return otherStyleTime
 def cal_div(x,y):
     if y == 0:
        theta = 0
@@ -31,7 +34,7 @@ def cal_div(x,y):
     return theta
 
 
-@jit()
+# @jit()
 def  get_data(zong,li):
     li_code_tmp=[]
     li_0grow_tmp=[]
@@ -121,30 +124,32 @@ def  get_data(zong,li):
 
     li_large_range_tmp=[]
     li_large_2345_range_tmp=[]
-
-
+    
+    li_012_tmp=[]
+    li_time_tmp=[]
     li_123_tmp=[]
-    li_01_tmp=[]
+    time=li.index('time')
     open=li.index('open')
     close=li.index('close')
     high=li.index('high')
     low=li.index('low') 
-    if len(zong) > 100:
-        for i in range(3,len(zong)-5):
-            if round(zong[i][open],2) > round(zong[i+1][close],2) and round(zong[i+1][open],2) > round(zong[i+2][open],2):
-                if round(zong[i][open],2) > round(zong[i+2][open],2):
-                    if round(zong[i+2][open],2) > round(zong[i+3][open],2):
-                        if round(zong[i+3][open],2) > round(zong[i+4][open],2):
-                            if round(zong[i+4][open],2) > round(zong[i+5][open],2):
+    
+    for i in range(3,len(zong)-6):
+            if (zong[i][close] - zong[i][open])/zong[i][open] < 0:
+                if (zong[i+1][close] - zong[i+1][open])/zong[i+1][open] < 0:
+                    if (zong[i+2][close] - zong[i+2][open])/zong[i+2][open] < 0:
+                        if (zong[i+3][close] - zong[i+3][open])/zong[i+3][open] >0:
+                            if (zong[i+4][close] - zong[i+4][open])/zong[i+4][open] < 0:
+                                if (zong[i+5][close] - zong[i+5][open])/zong[i+5][open] < 0:
+                                    if (zong[i+6][close] - zong[i+6][open])/zong[i+6][open] < 0:
 
-
-                                if (zong[i][close] - zong[i][open])/zong[i][open] > 0:
-                                    if (zong[i+1][close] - zong[i+1][open])/zong[i+1][open] < 0:
-                                        if (zong[i+2][close] - zong[i+2][open])/zong[i+2][open] > 0:
-                                            if (zong[i+3][close] - zong[i+3][open])/zong[i+3][open] >0:
-                                                if (zong[i+4][close] - zong[i+4][open])/zong[i+4][open] > 0:
-                                                    if (zong[i+5][close] - zong[i+5][open])/zong[i+5][open] > 0:
-                                                        if zong[i-5][close]:
+                                        if zong[i][open] < zong[i+1][open]:
+                                            if zong[i+1][open] < zong[i+2][open]:
+                                                if zong[i+5][open] < zong[i+6][open]:
+                                                    if zong[i+4][open] < zong[i+5][open]:
+                                                        if zong[i+2][open] < zong[i+4][open]:
+                                                            # if zong[i-5][close]:
+                                                                li_time_tmp.append(zong[i][time])
                                                                 li_code_tmp.append(str(code_nm))
                                                               
                                                                 grow0_tmp=(zong[i+0][close] - zong[i+0][open])/zong[i+0][open] 
@@ -176,6 +181,8 @@ def  get_data(zong,li):
                                                                 open5=zong[i+5][open]
 
                                                                 min_value=min(open0,open1,open2,open3,open4,open5,close0,close1,close2,close3,close4,close5)
+                                                                print((open0,open1,open2,open3,open4,open5,close0,close1,close2,close3,close4,close5))
+                                                                print(zong[i+0])
                                                                 max_value=max(open0,open1,open2,open3,open4,open5,close0,close1,close2,close3,close4,close5)
                                                                 
                                                                 li_large_range_tmp.append((max_value-min_value)/min_value)
@@ -308,14 +315,10 @@ def  get_data(zong,li):
 
 
 
-
-                                                                li_123_avg=(zong[i-1][close]+zong[i-2][close]+zong[i-3][close])/3
-                                                                li_123_tmp.append((li_123_avg - max_value)/max_value)
-
-                                                                if (zong[i-1][close] - zong[i-1][open])/zong[i-1][open] > 0: 
-                                                                    if (zong[i-2][close] - zong[i-2][open])/zong[i-2][open] > 0:
-                                                                        if zong[i-2][open] > zong[i-1][open]:
-                                                                            if zong[i-1][open] > zong[i][open]:
+                                                                if (zong[i-1][close] - zong[i-1][open])/zong[i-1][open] < 0: 
+                                                                    if (zong[i-2][close] - zong[i-2][open])/zong[i-2][open] < 0:
+                                                                        if zong[i-2][open] < zong[i-1][open]:
+                                                                            if zong[i-1][open] < zong[i][open]:
                                                                                 tmp_123=1
                                                                             else:
                                                                                 tmp_123=0 
@@ -327,7 +330,20 @@ def  get_data(zong,li):
 
                                                                 else:
                                                                     tmp_123=0 
-                                                                li_01_tmp.append(tmp_123)           
+                                                                li_012_tmp.append(tmp_123) 
+
+                                                                li_123_avg=min(zong[i-1][close],zong[i-2][close])
+                                                                li_123_tmp.append((li_123_avg - zong[i][close])/zong[i][close])
+                                                                
+
+
+                                                                # print(str(code_nm))
+                                                                # print('1值'+str(zong[i-1][close]))
+                                                                # print('2值'+str(zong[i-2][close]))
+                                                                # print('2值'+str(todate(zong[i-1][time])))
+                                                                # print('2值'+str(todate(zong[i-2][time])))
+                                                                # print('平均值'+str(li_123_avg))
+                                                                # print('最小值'+str(min_value))
 
 
 
@@ -387,7 +403,8 @@ def  get_data(zong,li):
         #  'li_1vol_tmp': li_1vol_tmp,
         # 'li_2vol_tmp': li_2vol_tmp, 'li_3vol_tmp': li_3vol_tmp,
         # 'li_4vol_tmp': li_4vol_tmp, 'li_5vol_tmp': li_5vol_tmp,
-        'li_grow_std':li_grow_std,'li_01_tmp':li_01_tmp,'li_grow_mean':li_grow_mean,
+         'li_time_tmp':li_time_tmp,'li_012_tmp':li_012_tmp,
+        'li_grow_std':li_grow_std,'li_grow_mean':li_grow_mean,
         'li_123_tmp': li_123_tmp}
     else:
         tmp_dic=False
@@ -398,22 +415,56 @@ def  get_data(zong,li):
 # order = ['code', 'li_0close_near_tmp', 'li_0grow_tmp', 'li_0max_close_tmp', 'li_0max_min_near_tmp', 'li_0max_min_tmp', 'li_0max_tmp', 'li_0min_close_tmp', 'li_0min_tmp', 'li_0open_near_tmp', 'li_123_tmp', 'li_1close_near_tmp', 'li_1grow_tmp', 'li_1max_close_tmp', 'li_1max_min_near_tmp', 'li_1max_min_tmp', 'li_1max_tmp', 'li_1min_close_tmp', 'li_1min_tmp', 'li_1open_near_tmp', 'li_1up_tmp', 'li_2close_near_tmp', 'li_2grow_tmp', 'li_2max_close_tmp', 'li_2max_min_near_tmp', 'li_2max_min_tmp', 'li_2max_tmp', 'li_2min_close_tmp', 'li_2min_tmp', 'li_2open_near_tmp', 'li_2up_tmp', 'li_3close_near_tmp', 'li_3grow_tmp', 'li_3max_close_tmp', 'li_3max_min_near_tmp', 'li_3max_min_tmp', 'li_3max_tmp', 'li_3min_close_tmp', 'li_3min_tmp', 'li_3open_near_tmp', 'li_3up_tmp', 'li_4close_near_tmp', 'li_4grow_tmp', 'li_4max_close_tmp', 'li_4max_min_near_tmp', 'li_4max_min_tmp', 'li_4max_tmp', 'li_4min_close_tmp', 'li_4min_tmp', 'li_4open_near_tmp', 'li_4up_tmp', 'li_5grow_tmp', 'li_5max_close_tmp', 'li_5max_min_tmp', 'li_5max_tmp', 'li_5min_close_tmp', 'li_5min_tmp', 'li_5up_tmp', 'li_grow_mean', 'li_grow_std']
 # tmp_df = tmp_df[order] 
  
+# ds_disk =xr.open_dataset('E:/2018-10-27us_stock_day_saved.nc')
+# a=ds_disk.get('DRYS').to_pandas()
+# print(zong[zong['volume']>100000].size)
+# print(zong[zong['volume']<100000].index.tolist())
+# lii=zong[zong['volume']<100000].index.tolist()
+# vv=mzongx(lii)
+# print(zong[897:])
+# print(vv)
+# zong[897:].to_csv('DRYS.csv')
+
+
 
 sum_dic={}
-ds_disk =xr.open_dataset('E:/save.nc')
+ds_disk =xr.open_dataset('F:/down_saved_on_disk_all.nc')
 code=ds_disk.to_dataframe().columns.tolist()
+
 for code_nm in code:
-    zong = ds_disk.get(str(code_nm)).to_pandas().sort_index(ascending=False)
+    zong = ds_disk.get(str(code_nm)).to_pandas()
     zong = zong.dropna(axis = 0)  #删除行
     zong = zong.fillna(0)
+    
+    # 索引变为列
+    # zong=zong.reset_index(inplace=True)
+    # 修改索引的名字/ 变为列的话为列的名字
+    # zong.index.rename('time', inplace=True)
+
+
+    # 方法1
+    # zong.index.rename('time', inplace=True)
+    # zong.reset_index(inplace=True)
+    # zong.rename(columns={'Close': 'close', 'Open': 'open', 'High': 'high', 'Low': 'low', 'Volume': 'volume'}, inplace=True) 
+    
+
+    # 方法2
+    zong['time']=zong.index.values.tolist()
+    zong=zong.reset_index(drop=True)
+    zong.rename(columns={'Close': 'close', 'Open': 'open', 'High': 'high', 'Low': 'low', 'Volume': 'volume'}, inplace=True) 
+    
+
+
+
     if zong[zong['volume']>100000].size >0:
+        # zong=zong.reset_index(drop = True)
         lii=zong[zong['volume']>100000].index.tolist()
         if lii:
             vv=min(lii)
             if len(zong) > vv:
                 zong=zong[vv:]
-                zong = zong.sort_values("time",ascending=False)
-                # zong = zong.sort_index(ascending=False)
+                # zong = zong.sort_values("time",ascending=False)
+                zong = zong.sort_index(ascending=False)
                 li=zong.columns.values.tolist()
                 # print(li)
                 # print(li.index('attrib_nm2'))
@@ -432,7 +483,8 @@ for code_nm in code:
 #     print(len(sum_dic[key]))
 
 tmp_df=pd.DataFrame(sum_dic)
-tmp_df.to_csv('E:/analysis_55.csv', index = False)
+# tmp_df['li_time_tmp']=tmp_df['li_time_tmp'].apply(todate)
+tmp_df.to_csv('E:/test1_analysis_all2.csv',index=False)
 
 
 

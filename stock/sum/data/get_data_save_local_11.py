@@ -33,12 +33,12 @@ def save(na,ma):
                 n_tmp=n_tmp+1      
                 result=web.get_data_yahoo(i,start,end)               
                 nu=nu+1
-<<<<<<< HEAD
+
             except:
-=======
+
             except Exception as e:
                 print(e)
->>>>>>> five-one
+
                 continue 
             else: 
                 dic.update({i: result})
